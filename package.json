@@ -1,0 +1,11 @@
+{
+  "name": "bun-overrides-pair-probe",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "overrides": {
+    "hono > zod": "3.22.0"
+  }
+}

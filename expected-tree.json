@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.2",
+  "pm": "bun",
+  "pm_version_under_test": "1.1.30",
+  "source_file": "bun.lock",
+  "generated_at": "2026-05-15T00:00:00+00:00",
+  "paired_with": "bun-overrides-1.0-flat-probe",
+  "pair_id": "V2",
+  "pair_label": "version-pm-overrides-pre-vs-post-1.1",
+  "probe_role": "B",
+  "probe_name": "bun-overrides-1.1-scoped-probe",
+  "coverage_plan_entry": 12,
+
+  "root": {
+    "name": "bun-overrides-pair-probe",
+    "version": "0.1.0",
+    "dependencies": [
+      "hono"
+    ]
+  },
+
+  "packages": {
+    "hono": {
+      "version": "4.12.18",
+      "source": "registry",
+      "group": "main",
+      "dependencies": [],
+      "source_detail": {
+        "registry": "https://registry.npmjs.org"
+      }
+    }
+  },
+
+  "project_metadata": {
+    "source_file": "bun.lock",
+    "lockfile_format": "text-jsonc",
+    "bun_version": "1.1.30",
+    "groups": [
+      "main"
+    ],
+    "overrides": [
+      {
+        "hono > zod": "3.22.0"
+      }
+    ],
+    "override_scope_semantics": "scoped",
+    "override_scope_note": "Bun 1.1+ preserves scoped selectors. The key 'hono > zod' must appear verbatim in parsed override metadata — NOT flattened to bare 'zod'. Bun 1.0.x would have stored this as 'zod' only."
+  },
+
+  "dependency_counts": {
+    "direct": 1,
+    "transitive": 0,
+    "total": 1
+  },
+
+  "warnings": [
+    "Bun 1.1+ honors scoped selectors. This is the correct modern behavior. The override applies only to the hono→zod edge. If Mend's parser treats the scoped selector as a flat override (like Bun 1.0), every zod in the tree would be 3.22.0 — that would be the WRONG answer for this Bun version.",
+    "hono@4.12.18 has ZERO runtime dependencies (verified against npm registry). The scoped override 'hono > zod': '3.22.0' has no hono→zod edge to apply — zod does not appear in this lockfile. This is expected and correct. The probe validates that: (1) Mend records the scoped override declaration in project_metadata.overrides with the composite key 'hono > zod' verbatim, and (2) Mend does NOT fabricate a zod entry in the dep tree because the override exists.",
+    "Paired probe: bun-overrides-1.0-flat-probe (#11) at https://github.com/mend-detection-qa/bun-overrides-1.0-flat-probe. Same package.json; the difference is Bun version + override scope semantics. Probe #11 uses Bun 1.0.36 which degrades 'hono > zod' to flat 'zod'. Probe #12 (this probe) uses Bun 1.1.30 which preserves the scoped form. Compare project_metadata.overrides between the two probes — they should differ in key format.",
+    "Bun is NOT a UA-supported resolver. No .whitesource file is emitted — manual tool version pinning via scanSettings.versioning is impossible for this ecosystem. Detection is lockfile-driven (bun.lock JSONC static parsing). If Mend cannot parse bun.lock text JSONC format, the entire dep tree will be empty.",
+    "The JSONC lockfile includes inline comments (// ...) and trailing commas per the Bun 1.1 text format spec. Mend's parser MUST tolerate these or will crash on first comment line."
+  ],
+
+  "mend_parser_predictions": {
+    "correct_behavior": {
+      "direct_deps": ["hono@4.12.18"],
+      "transitive_deps": [],
+      "override_recorded_as": "hono > zod",
+      "zod_in_tree": false
+    },
+    "incorrect_behavior_if_flat_override_applied": {
+      "description": "If Mend treats the scoped override as flat (Bun 1.0 behavior), it might incorrectly add zod@3.22.0 to the tree even though hono does not depend on zod. This would be a false-positive dependency insertion.",
+      "fabricated_dep": "zod@3.22.0",
+      "override_recorded_as_wrong": "zod"
+    },
+    "incorrect_behavior_if_override_stripped": {
+      "description": "If Mend ignores the overrides block entirely, project_metadata.overrides will be empty. This means downstream consumers cannot detect that an override was declared, masking the scoped-vs-flat semantic difference.",
+      "override_recorded_as_wrong": null
+    }
+  }
+}

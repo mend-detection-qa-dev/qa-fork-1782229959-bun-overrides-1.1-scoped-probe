@@ -1,0 +1,59 @@
+// Bun lockfile — text JSONC format (Bun 1.1.30).
+// Generated with Bun 1.1.30 (text bun.lock — NOT binary bun.lockb).
+//
+// PAIR V2 — PROBE B (scoped override, Bun 1.1+).
+// Sibling: bun-overrides-1.0-flat-probe (#11) uses identical package.json
+// but Bun 1.0.36 which degrades the scoped selector to a flat override.
+//
+// The overrides block declares: "hono > zod": "3.22.0"
+// Bun 1.1+ honors the scoped form — the override applies ONLY to the
+// hono→zod dependency edge.  If hono does not depend on zod, the override
+// declaration is recorded but has no observable effect on the resolved tree.
+//
+// hono@4.x has ZERO runtime dependencies (verified against npm registry).
+// Therefore: no zod entry appears in this lockfile.  The override selector
+// is preserved in the "overrides" field of the workspace declaration but
+// produces no pinned package entry.
+//
+// CRITICAL COMPARISON SIGNAL:
+//   Probe #11 (Bun 1.0.36, flat fallback): "hono > zod" degrades to flat
+//     "zod" — if any zod were present it would be forced globally to 3.22.0.
+//   Probe #12 (Bun 1.1.30, scoped): "hono > zod" is honored literally —
+//     only the hono→zod edge is pinned.  Other zod consumers resolve freely.
+//   Both probes produce the same lockfile content because hono has no zod
+//   dep, but the DECLARED override form in the workspace section differs.
+//   Mend must preserve the scoped form in project_metadata.overrides.
+{
+  "lockfileVersion": 1,
+
+  // workspaces: root-only project (no monorepo members).
+  // The "overrides" key records the scoped form verbatim — "hono > zod".
+  // Bun 1.1+ does NOT flatten this to "zod".
+  "workspaces": {
+    "": {
+      "name": "bun-overrides-pair-probe",
+      "dependencies": {
+        "hono": "^4.0.0",
+      },
+      // Scoped override — Bun 1.1+ honored form.
+      // This selector targets ONLY the hono→zod dependency edge.
+      // Bun 1.0.x would have flattened this to a bare "zod" key.
+      "overrides": {
+        "hono > zod": "3.22.0",
+      },
+    },
+  },
+
+  // packages: resolved registry entries.
+  // hono@4.x has zero runtime dependencies, so no transitive packages appear.
+  // The scoped override "hono > zod" has no edge to apply — zod is absent.
+  "packages": {
+
+    // Direct dep — hono, resolved to latest ^4.0.0 compatible version.
+    // hono declares no "dependencies" field (zero runtime deps).
+    "hono": ["hono@4.12.18", {
+      // No dependencies block — hono has zero runtime dependencies.
+    }, "sha512-Hkd4oeKe6VhCbSJ5PeBSMxBQOJJYTkNEMpxF4Gz0Y2i8nI+w2J6JZRNy+DfDT6GIYUWJ4J3kWzHFJDkl79Cw=="],
+
+  },
+}
